@@ -242,10 +242,6 @@ if %itemslot7%==true if %itemslot8%==true if %itemslot9%==true goto donerecipe_1
 :donerecipe_1_2_3_full_line
 echo     "#XO",>> item%random1%.json
 echo     "@+-",>> item%random1%.json
-rename item%random1%.json item.json
-move item.json C:\Users\%username%
 echo     "%$#">> item.json
-move item.json .\
-rename item.json item%random1%.json
 echo   ],>> item%random1%.json
 echo   "key": {>>item%random1%.json
