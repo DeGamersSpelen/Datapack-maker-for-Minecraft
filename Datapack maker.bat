@@ -1,10 +1,17 @@
 @echo off
-echo Do you want to make a new datapack or use a old datapack.
+:start
+cls
+echo Warning this needs to be in your downloads. If you change the code you can change it. BTW the folder needs to be named "Datapack maker" (without the quotes). If its not called that you get errors for days
+set dir="C:\Users\%username%\downloads\Datapack maker\recipes"
+echo Do you want to make a new datapack or use a old datapack or a template of a datapack.
 echo Type old for old datapack.
 echo Type new for new datapack
+echo Type template for a template of a datapack
 set /p choice=
 if %choice%==new goto new
 if %choice%==old goto old
+if %choice%==template goto template
+
 exit
 :old
 cls
@@ -23,7 +30,45 @@ set /p choice2=
 if %choice2%==yes cd %datapack%/functions && goto yes
 if %choice2%==exit exit
 
-
+:template
+cls
+echo Where do you want the datapack in you need this if you put minecraft in an other directory type default to get the default minecraft directory
+set /p dir2=
+if %dir2%==default set dir2=%appdata%/.minecraft/saves/
+cd %dir2%
+echo Which world do you want to use? Enter name below.
+set /p save=
+cd %save%/datapacks
+echo Whats the name of the datapack? Enter name below.
+set /p name=
+mkdir %name%
+cd %name%
+echo {> pack.mcmeta
+echo 	"pack": {>> pack.mcmeta
+echo 		"pack_format": 6,>> pack.mcmeta
+echo 		"description": "">> pack.mcmeta
+echo 	}>> pack.mcmeta
+echo }>> pack.mcmeta
+mkdir data
+cd data
+mkdir minecraft
+mkdir %name%
+cd minecraft
+mkdir tags
+cd tags
+mkdir functions
+cd functions
+echo {> tick.json
+echo 	"values":[>> tick.json
+echo 		"%name%:main">> tick.json
+echo 	]>> tick.json
+echo }>> tick.json
+cd.. && cd.. && cd..
+cd %name%
+mkdir functions
+cd functions
+echo Here you put the commands you want to execute every 1/20 of a second> main.mcfunction
+start main.mcfunction
 
 :yes
 cls
@@ -34,7 +79,10 @@ goto menu
 
 :new
 cls
-cd %appdata%/.minecraft/saves/
+echo Where do you want the datapack in you need this if you put minecraft in an other directory type default to get the default minecraft directory
+set /p dir2=
+if %dir2%==default set dir2=%appdata%/.minecraft/saves/
+cd %dir2%
 echo Which world do you want to use? Enter name below.
 set /p save=
 cd %save%/datapacks
@@ -69,13 +117,14 @@ cd.. && cd.. && cd..
 cd %name%
 mkdir functions
 cd functions
-goto or1
+goto
 
 :or2
 echo Do you want to add a recipe or do a command every 1/20 of a second? Type recipe for the recipe part. Type command for the command part. Type help for more.
 set /p or=
 if %or%==command goto command2
 if %or%==recipe goto recipe2
+if %or%==loot goto loot_tables
 if %or%==help goto help1
 goto or2
 
@@ -108,6 +157,7 @@ echo %wow%> main.mcfunction
 goto or2
 
 :recipe1
+echo BTW you can type sheep_egg or cow_egg for those spawn eggs i know that those are not default tho
 cd..
 mkdir "recipes"
 cd "recipes"
@@ -240,12 +290,36 @@ if %itemslot4%==true if %itemslot5%==true if %itemslot6%==true goto donerecipe_1
 if %itemslot7%==true if %itemslot8%==true if %itemslot9%==true goto donerecipe_1_2_3_full_line
 
 :donerecipe_1_2_3_full_line
-echo     "#XO",>> item%random1%.json
-echo     "@+-",>> item%random1%.json
-rename item%random1%.json item.json
-move item.json C:\Users\%username%
-echo     "%$#">> item.json
-move item.json .\
+copy %dir%\recipes\item.json
 rename item.json item%random1%.json
-echo   ],>> item%random1%.json
-echo   "key": {>>item%random1%.json
+echo   "key": {>> item%random1%.json
+echo     "#": {>> item%random1%.json
+if %itemslot1%==cow_egg goto cow_egg
+
+:cow_egg_1_2_3_full_line
+echo       "item": "minecraft:spawn_egg",
+echo       "tag": "{EntityTag:{id:minecraft:cow}}"
+
+echo       "item": "minecraft:%itemslot1%",
+set rd1=item%random1%.json
+echo     },>> %rd1%
+echo     "X": {>> %rd1%
+echo       "item": "minecraft:%itemslot2%",>> %rd1%
+echo     },>> %rd1%
+echo     "O": {>> %rd1%
+echo       "item": "minecraft:%itemslot3%">> %rd1%
+echo     },>> %rd1%
+echo     "@": {>> %rd1%
+echo       "item": "minecraft:%itemslot4%">> %rd1%
+echo     },>> %rd1%
+echo     "+": {>> %rd1%
+echo       "item": "minecraft:%itemslot5%">> %rd1%
+echo     },>> %rd1%
+echo     "-": {
+echo       "item": "minecraft:%itemslot6%">> %rd1%
+echo     },>> %rd1%
+echo     "delete this text and put a procent here": {>> %rd1%
+echo       "item": "minecraft:%itemslot7%">> %rd1%
+echo     },>> %rd1%
+echo     "$": {>> %rd1%
+echo 
